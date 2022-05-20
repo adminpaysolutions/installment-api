@@ -63,13 +63,13 @@ paths:
           in: header
           schema:
             type: string
-          example: QP6ElZ6ILFjRxShwDKKD
+          example: QP6ElZ612312312313
         - name: merchantid
           in: path
           schema:
             type: integer
           required: true
-          example: '17563'
+          example: '12345'
         - name: bank
           in: path
           schema:
@@ -101,7 +101,7 @@ paths:
                 Amount: '5000'
                 InstallmentTerm: '6'
                 ReferenceOrder: '202203200005'
-                MerchantId: '17563'
+                MerchantId: '12345'
                 SecretKey: QWERTY23423424
       parameters:
         - name: apikey
@@ -113,7 +113,7 @@ paths:
           in: header
           schema:
             type: string
-          example: QP6ElZ6ILFjRxShwDKKD
+          example: QP6ElZ6ILF124124234
         - name: bank
           in: path
           schema:
