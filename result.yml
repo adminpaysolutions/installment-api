@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  title: installmentAPI-External
+  version: 1.0.0
+servers:
+  - url: http://{{server}}api
+  - url: http://localhost:5888
+paths:
+  /installment/{bank}:
+    post:
+      tags:
+        - default
+      summary: CreateInstallment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                Amount: '5000'
+                InstallmentTerm: '10'
+                InstallmentRate: '0.0'
+                Description: Test BAY Installment 0%
+                ReferenceOrder: '202203280009'
+                MerchantId: '17563'
+                SecretKey: QWERTY23423424
+                CardName: Panupong
+                CardNumber: '{{creditcard}}'
+                CardExpMonth: '{{expmonth}}'
+                CardExpYear: '{{expyear}}'
+                CardCVV: '{{cvv}}'
+                Email: panupong@tarad.com
+                ReturnURL: '-'
+                PostBackURL: '-'
+      parameters:
+        - name: apikey
+          in: header
+          schema:
+            type: string
+          example: '{{apikey}}'
+        - name: bank
+          in: path
+          schema:
+            type: string
+          required: true
+          example: '{{bank}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/installmentinfo/{merchantid}/{bank}/{orderno}:
+    get:
+      tags:
+        - default
+      summary: GetInstallmentInfo
+      parameters:
+        - name: apikey
+          in: header
+          schema:
+            type: integer
+          example: '123456'
+        - name: secretKey
+          in: header
+          schema:
+            type: string
+          example: QP6ElZ6ILFjRxShwDKKD
+        - name: merchantid
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '17563'
+        - name: bank
+          in: path
+          schema:
+            type: string
+          required: true
+          example: BAY
+        - name: orderno
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '202203200009'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/voidinst/{bank}:
+    post:
+      tags:
+        - default
+      summary: VoidInstallment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                Amount: '5000'
+                InstallmentTerm: '6'
+                ReferenceOrder: '202203200005'
+                MerchantId: '17563'
+                SecretKey: QWERTY23423424
+      parameters:
+        - name: apikey
+          in: header
+          schema:
+            type: integer
+          example: '123456'
+        - name: Secretkey
+          in: header
+          schema:
+            type: string
+          example: QP6ElZ6ILFjRxShwDKKD
+        - name: bank
+          in: path
+          schema:
+            type: string
+          required: true
+          example: BAY
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/installmentrate/{merchantid}/{bank}/{amount}:
+    get:
+      tags:
+        - default
+      summary: GetInstallmentRate
+      parameters:
+        - name: merchantid
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: bank
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: amount
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
