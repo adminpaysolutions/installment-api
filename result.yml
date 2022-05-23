@@ -125,7 +125,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /api/installmentrate/{merchantid}/{bank}/{amount}:
+  /api/installmentrate:
     get:
       tags:
         - default
