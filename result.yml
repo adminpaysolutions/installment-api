@@ -5,7 +5,7 @@ info:
 servers:
   - url: https://stg-apis.paysolutions.asia/installment
 paths:
-  /installment/{bank}:
+  /api/installment/{bank}:
     post:
       tags:
         - default
