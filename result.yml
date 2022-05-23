@@ -130,22 +130,6 @@ paths:
       tags:
         - default
       summary: GetInstallmentRate
-      parameters:
-        - name: merchantid
-          in: path
-          schema:
-            type: string
-          required: true
-        - name: bank
-          in: path
-          schema:
-            type: string
-          required: true
-        - name: amount
-          in: path
-          schema:
-            type: string
-          required: true
       responses:
         '200':
           description: Successful response
