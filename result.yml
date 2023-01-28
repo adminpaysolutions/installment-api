@@ -1,36 +1,36 @@
 openapi: 3.0.0
 info:
-  title: installmentAPI-External
+  title: Paysolutions IPP Gateway API
   version: 1.0.0
 servers:
-  - url: https://stg-apis.paysolutions.asia/installment
+  - url: https://stg-apis.paysolutions.asia
 paths:
-  /api/installment/{bank}:
+  /installment/api/installment/{bank}:
     post:
       tags:
         - default
-      summary: CreateInstallment
+      summary: Create installment
       requestBody:
         content:
           application/json:
             schema:
               type: object
               example:
-                Amount: '5000'
-                InstallmentTerm: '10'
-                InstallmentRate: '0.0'
-                Description: Test BAY Installment 0%
-                ReferenceOrder: '202203280009'
-                MerchantId: '17563'
-                SecretKey: QWERTY23423424
-                CardName: Panupong
-                CardNumber: '{{creditcard}}'
+                Amount: '3000.00'
+                InstallmentTerm: '3'
+                InstallmentRate: '0.8'
+                Description: '{{Description}}'
+                ReferenceOrder: '{{Reference No. unique id 12 digit numeric }}'
+                MerchantId: '{{merchantid}}'
+                SecretKey: '{{merchant secretkey}}}'
+                CardName: '{{Card Holder Name}}'
+                CardNumber: '{{Credit Card Number}}'
                 CardExpMonth: '{{expmonth}}'
                 CardExpYear: '{{expyear}}'
                 CardCVV: '{{cvv}}'
-                Email: panupong@tarad.com
-                ReturnURL: '-'
-                PostBackURL: '-'
+                Email: '{{Customer email}}'
+                ReturnURL: '{{Return URL default - (Use setting) }}'
+                PostBackURL: '{{Postback URL default - (Use setting) }}'
       parameters:
         - name: apikey
           in: header
@@ -47,51 +47,25 @@ paths:
         '200':
           description: Successful response
           content:
-            application/json: {}
-  /api/installmentinfo/{merchantid}/{bank}/{orderno}:
-    get:
-      tags:
-        - default
-      summary: GetInstallmentInfo
-      parameters:
-        - name: apikey
-          in: header
-          schema:
-            type: integer
-          example: '123456'
-        - name: secretKey
-          in: header
-          schema:
-            type: string
-          example: QP6ElZ612312312313
-        - name: merchantid
-          in: path
-          schema:
-            type: integer
-          required: true
-          example: '12345'
-        - name: bank
-          in: path
-          schema:
-            type: string
-          required: true
-          example: BAY
-        - name: orderno
-          in: path
-          schema:
-            type: integer
-          required: true
-          example: '202203200009'
-      responses:
-        '200':
-          description: Successful response
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedInstallmentResponse'
+        '500':
+          description: Unexpected error.
           content:
-            application/json: {}
-  /api/voidinst/{bank}:
+            application/json:
+              schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      description: Error Detail
+                      example : Create Installment ERROR
+  /installment/api/voidinst/{bank}:
     post:
       tags:
         - default
-      summary: VoidInstallment
+      summary: Void Installment transaction
       requestBody:
         content:
           application/json:
@@ -100,38 +74,370 @@ paths:
               example:
                 Amount: '5000'
                 InstallmentTerm: '6'
-                ReferenceOrder: '202203200005'
-                MerchantId: '12345'
-                SecretKey: QWERTY23423424
+                ReferenceOrder: '166149573900'
+                MerchantId: '{{merchantid}}'
+                SecretKey: '{{secretkey}}'
       parameters:
         - name: apikey
           in: header
           schema:
-            type: integer
-          example: '123456'
+            type: string
+          example: '{{apikey}}'
         - name: Secretkey
           in: header
           schema:
             type: string
-          example: QP6ElZ6ILF124124234
+          example: '{{secretkey}}'
         - name: bank
           in: path
           schema:
             type: string
           required: true
-          example: BAY
+          example: '{{bank}}'
       responses:
         '200':
           description: Successful response
           content:
-            application/json: {}
-  /api/installmentrate:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoidInstallmentResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      description: Error Detail
+                      example : Void ERROR Merchant incorrect
+  /installment/api/installmentrate/{bank}/{amount}:
     get:
       tags:
         - default
-      summary: GetInstallmentRate
+      summary: Get Installment Plan and Rate
+      parameters:
+        - name: apikey
+          in: header
+          schema:
+            type: string
+          example: '{{apikey}}'
+        - name: bank
+          in: path
+          schema:
+            type: string
+          required: true
+          example: SCB
+        - name: amount
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '3000'
       responses:
         '200':
-          description: Successful response
+          description: A list of Installment Rate and Plan .
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstallmentPlanAndRate'
+  /orderdetail/orderdetailpost:
+      post:
+        tags:
+          - default
+        summary: Inquiry Order Detail
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  merchantId: '{{merchantid}}'
+                  orderNo: x
+                  refNo: '997473812600'
+                  productDetail: QWERTY
+        parameters:
+          - name: merchantId
+            in: header
+            schema:
+              type: string
+            example: '{{merchantid}}'
+          - name: merchantSecretKey
+            in: header
+            schema:
+              type: string
+            example: '{{secretkey}}'
+          - name: Content-Type
+            in: header
+            schema:
+              type: string
+            example: application/json
+          - name: apikey
+            in: header
+            schema:
+              type: string
+            example: '{{apikey}}'
+        responses:
+          '200':
+            description: A list of Order Detail .
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OrderDetail'
+  /orderreport/api/orderreport:
+    get:
+      tags:
+        - default
+      summary: Inquiry Transaction
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json; charset=utf-8
+        - name: apikey
+          in: header
+          schema:
+            type: string
+          example: '{{apikey}}'
+      responses:
+        '200':
+          description: A list of Transaction.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderReport'          
+components:
+  schemas:
+    CreatedInstallmentResponse:
+      type: object
+      properties:
+        Status:
+          type: string
+          description: Response Status
+          example: OK
+        RefId:
+          type: string
+          description: Reference No.
+          example: 123456789012
+        PaymentURL:
+          type: string
+          description: url redirect to otp input 
+          example: https://stg-apis.paysolutions.asia/bay/view/otp?input=r00zmxxo0cc6xM_k_uHzxM8A_n_KikYxxkafINVW&merchantid=12345
+        CreateDate:
+          type: string
+          description: data created date
+        BankRef:
+          type: string
+          description: not use    
+    VoidInstallmentResponse:
+      type: object
+      properties:
+        Status:
+          type: string
+          description: Response Status
+          example: Voided
+        RefId:
+          type: string
+          description: Reference No.
+          example: 123456789012
+        PaymentURL:
+          type: string
+          description: url redirect to otp input 
+          example: ""
+        CreateDate:
+          type: string
+          description: data created date
+          example: ""
+        BankRef:
+          type: string
+          description: not use
+          example: ""                  
+    InstallmentPlanAndRate:
+      type: object
+      properties:
+        Bank_code:
+          type: string
+          description: Bank Code
+          example: KBANK
+        Installment_type:
+          type: string
+          description: Installment Type (NORMAL/ZERO)
+          example: NORMAL
+        Bank_rate:
+          type: string
+          description: Bank Interest Rate
+          example: "0.74"
+        Installment_term:
+          type: string
+          description: Installment Term 
+          example: 6
+        Monthly_interest_amount:
+          type: string
+          description: Calculated inrterest amount per month
+          example: "22.200000"    
+        Monthly_amount:
+          type: string
+          description: Calculated amount per month
+          example: "522.200000"
+        Interest_amount:
+          type: string
+          description: Total Interest Amount
+          example: "133.200000"      
+        Total_amount:
+          type: string
+          description: Total Amount
+          example: "3133.200000"
+    OrderReport:
+      type: object
+      properties:
+        MerchantID:
+          type: string
+          description: Merchant ID (last 5 digit)
+          example: 12345
+        CompanyTH:
+          type: string
+          description: Company Name
+          example: Merchant Staging
+        OrderDateTime:
+          type: string
+          description: Order DateTime
+          example: "2023-01-27T15:22:21Z"
+        PaymentDate:
+          type: string
+          description: Payment DateTime 
+          example: "2023-01-27T15:22:21Z"
+        ReferenceNo:
+          type: string
+          description: Merchant Order Reference No.
+          example: "123456789012"  
+        OrderNo:
+          type: string
+          description: Paysolutions Order No.
+          example: "100002726"    
+        ProductDetail:
+          type: string
+          description: Product Detail
+          example: Test Installment
+        CardType:
+          type: string
+          description: Card Type (V/M/J)
+          example: V      
+        CustomerEmail:
+          type: string
+          description: Customer Email
+          example: test@email.com        
+        CurrencyCode:
+          type: string
+          description: Currency Code
+          example: "00"
+        Status:
+          type: string
+          description: Order Status (CP/Y)
+          example: CP  
+        StatusName:
+          type: string
+          description: Total Amount (COMPLETED/Paid)
+          example: COMPLETE                             
+        Installment:
+          type: string
+          description: Installment Detail (plan-interest-totalamount-amountpermonth)
+          example: "3-0-6000-2000"           
+        Total:
+          type: string
+          description: Payment Amount
+          example: "6000" 
+        FeeRate:
+          type: string
+          description: Fee Rate
+          example: "2.6"  
+        CurrencyRate:
+          type: string
+          description: Currency Rate 
+          example: "1"   
+        VATfee:
+          type: string
+          description: VAT Fee
+          example: "7.5600" 
+        TotalFee:
+          type: string
+          description: Total Fee
+          example: "115.56"      
+        Nets:
+          type: string
+          description: NOT USE
+          example: ""                                                       
+    OrderDetail: 
+      type: object
+      properties:
+        ReferenceNo:
+          type: string
+          description: Merchant Order Reference No.
+          example: "12345"
+        OrderNo:
+            type: string
+            description: Paysolutions Order No
+            example: "10002222"
+        MerchantID:
+          type: string
+          description:  Merchant ID (last 5 digit)
+          example: "12345"
+        ProductDetail:
+          type: string
+          description: Product Detail
+          example: "Test Product" 
+        Total:
+          type: decimal
+          description: Payment Amount
+          example: 100.12                                
+        CardType:
+          type: string
+          description: Card Type (V/M/J)
+          example: V          
+        CustomerEmail:
+          type: string
+          description: Product Detail
+          example: Test Installment          
+        CurrencyCode:
+          type: string
+          description: Currency Code
+          example: "00"   
+        Status:
+          type: string
+          description: Order Status (CP/Y)
+          example: CP
+        StatusName:
+          type: string
+          description: Total Amount (COMPLETED/Paid)
+          example: COMPLETE   
+        PostBackUrl:
+          type: string
+          description: Postback URL 
+          example: "https://www.paysolutions.asia"  
+        PostBackParameters:
+          type: string
+          description: Postback Parameter
+          example: "refno=123423452&total=123.00"               
+        PostBackMethod:
+          type: string
+          description: Postback Method (P/G)
+          example: P   
+        PostBackCompleted:
+          type: boolean
+          description: Postback complete status (true/false)
+          example: true
+        OrderDateTime:
+          type: string
+          description: Order DateTime
+          example: "2023-01-26T13:07:11.000+00:00"
+        Installment:
+          type: string
+          description: Installment Detail (plan-interest-totalamount-amountpermonth)
+          example: "3-0-6000-2000"                                                                        
