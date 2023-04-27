@@ -117,6 +117,14 @@ paths:
       tags:
         - default
       summary: Get Installment Plan and Rate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                merchantid: '{{merchantid}}'
+                bins: '{{bins number 6 digit}}'    
       parameters:
         - name: apikey
           in: header
@@ -194,6 +202,18 @@ paths:
       tags:
         - default
       summary: Inquiry Transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                MerchantId: '{{merchantid}}'
+                SecretKey: '{{merchant secretkey}}}'
+                StartDate: '{{Transaction Date 2023-04-01T00:00:00}}'
+                EndDate: '{{Transaction Date 2023-04-01T00:00:00}}'
+                OrderStatus: '{{Order Status}}'
+                ProductDetail: '{{ProductDetail with %}}'    
       parameters:
         - name: Content-Type
           in: header
@@ -213,7 +233,23 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OrderReport'          
+                  $ref: '#/components/schemas/OrderReport'  
+  /bankcode:
+      get:
+        tags:
+          - default
+        summary: Get-BankCode
+        parameters:
+          - name: apikey
+            in: header
+            schema:
+              type: string
+            example: '{{apikey}}'
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json: {}                          
 components:
   schemas:
     CreatedInstallmentResponse:
