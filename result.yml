@@ -234,7 +234,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OrderReport'  
-  /bankcode:
+  /installment/api/bankcode:
       get:
         tags:
           - default
