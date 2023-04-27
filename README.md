@@ -1,2 +1,2 @@
-# installment-api
+# IPP Gateway API
 Public Installment API
