@@ -8,7 +8,7 @@ paths:
   /installment/api/installment/{bank}:
     post:
       tags:
-        - default
+        - Installment Order
       summary: Create installment
       requestBody:
         content:
@@ -61,10 +61,106 @@ paths:
                       type: string
                       description: Error Detail
                       example : Create Installment ERROR
+  /installment/api/bankcode:
+      get:
+        tags:
+          - Installment Order
+        summary: Get Bank Code And Default Bins
+        parameters:
+          - name: apikey
+            in: header
+            schema:
+              type: string
+            example: '{{apikey}}'
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json: {}  
+  /installment/api/installmentrate/{bank}/{amount}:
+    get:
+      tags:
+        - Installment Order
+      summary: Get Installment Plan and Rate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                merchantid: '{{merchantid}}'
+                bins: '{{bins number 6 digit}}'    
+      parameters:
+        - name: apikey
+          in: header
+          schema:
+            type: string
+          example: '{{apikey}}'
+        - name: bank
+          in: path
+          schema:
+            type: string
+          required: true
+          example: SCB
+        - name: amount
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '3000'
+      responses:
+        '200':
+          description: A list of Installment Rate and Plan .
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstallmentPlanAndRate'
+  /installment/api/installmentratepost/{bank}/{amount}:
+     post:
+      tags:
+        - Installment Order
+      summary: Get Installment Plan and Rate [POST Method]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                merchantid: '{{merchantid}}'
+                bins: '{{bins number 6 digit}}'    
+      parameters:
+        - name: apikey
+          in: header
+          schema:
+            type: string
+          example: '{{apikey}}'
+        - name: bank
+          in: path
+          schema:
+            type: string
+          required: true
+          example: SCB
+        - name: amount
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '3000'
+      responses:
+        '200':
+          description: A list of Installment Rate and Plan .
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstallmentPlanAndRate'
   /installment/api/voidinst/{bank}:
     post:
       tags:
-        - default
+        - Installment Order
       summary: Void Installment transaction
       requestBody:
         content:
@@ -112,50 +208,10 @@ paths:
                       type: string
                       description: Error Detail
                       example : Void ERROR Merchant incorrect
-  /installment/api/installmentrate/{bank}/{amount}:
-    get:
-      tags:
-        - default
-      summary: Get Installment Plan and Rate
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              example:
-                merchantid: '{{merchantid}}'
-                bins: '{{bins number 6 digit}}'    
-      parameters:
-        - name: apikey
-          in: header
-          schema:
-            type: string
-          example: '{{apikey}}'
-        - name: bank
-          in: path
-          schema:
-            type: string
-          required: true
-          example: SCB
-        - name: amount
-          in: path
-          schema:
-            type: integer
-          required: true
-          example: '3000'
-      responses:
-        '200':
-          description: A list of Installment Rate and Plan .
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/InstallmentPlanAndRate'
   /orderdetail/orderdetailpost:
       post:
         tags:
-          - default
+          - Order Inquiry
         summary: Inquiry Order Detail
         requestBody:
           content:
@@ -200,7 +256,7 @@ paths:
   /orderreport/api/orderreport:
     get:
       tags:
-        - default
+          - Order Inquiry
       summary: Inquiry Transaction
       requestBody:
         content:
@@ -233,23 +289,44 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OrderReport'  
-  /installment/api/bankcode:
-      get:
-        tags:
-          - default
-        summary: Get-BankCode
-        parameters:
-          - name: apikey
-            in: header
+                  $ref: '#/components/schemas/OrderReport'
+  /orderreport/api/orderreportpost:
+    post:
+      tags:
+          - Order Inquiry
+      summary: Inquiry Transaction [POST Method]
+      requestBody:
+        content:
+          application/json:
             schema:
-              type: string
-            example: '{{apikey}}'
-        responses:
-          '200':
-            description: Successful response
-            content:
-              application/json: {}                          
+              type: object
+              example:
+                MerchantId: '{{merchantid}}'
+                SecretKey: '{{merchant secretkey}}}'
+                StartDate: '{{Transaction Date 2023-04-01T00:00:00}}'
+                EndDate: '{{Transaction Date 2023-04-01T00:00:00}}'
+                OrderStatus: '{{Order Status}}'
+                ProductDetail: '{{ProductDetail with %}}'    
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json; charset=utf-8
+        - name: apikey
+          in: header
+          schema:
+            type: string
+          example: '{{apikey}}'
+      responses:
+        '200':
+          description: A list of Transaction.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderReport'                                           
 components:
   schemas:
     CreatedInstallmentResponse:
