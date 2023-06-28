@@ -208,7 +208,7 @@ paths:
                       type: string
                       description: Error Detail
                       example : Void ERROR Merchant incorrect
-  /orderdetail/orderdetailpost:
+  /order/orderdetailpost:
       post:
         tags:
           - Order Inquiry
